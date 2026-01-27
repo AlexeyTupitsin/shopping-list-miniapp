@@ -5,6 +5,7 @@ export const mockLists: ShoppingList[] = [
     id: '1',
     name: 'Продукты на неделю',
     ownerId: 123456789,
+    memberCount: 1,
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     items: [
       {
@@ -63,6 +64,7 @@ export const mockLists: ShoppingList[] = [
     id: '2',
     name: 'К празднику',
     ownerId: 123456789,
+    memberCount: 2,
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     items: [
       {
@@ -96,6 +98,7 @@ export const mockLists: ShoppingList[] = [
     id: '3',
     name: 'Хозтовары',
     ownerId: 123456789,
+    memberCount: 1,
     createdAt: new Date().toISOString(),
     items: [
       {
