@@ -5,7 +5,7 @@ import { useLists } from '../context/ListsContext'
 import './ListsPage.css'
 
 export default function ListsPage() {
-  const { lists, loading, addList } = useLists()
+  const { lists, loading, addList, deleteList } = useLists()
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
   const [newListName, setNewListName] = useState('')
   const navigate = useNavigate()
@@ -34,6 +34,32 @@ export default function ListsPage() {
 
   const handleListClick = (listId: string) => {
     navigate(`/list/${listId}`)
+  }
+
+  const handleDeleteList = async (listId: string, listName: string) => {
+    // Use Telegram's confirm dialog if available
+    const tg = window.Telegram?.WebApp
+
+    if (tg?.showConfirm) {
+      tg.showConfirm(
+        `Удалить список "${listName}"? Все товары в списке будут удалены.`,
+        async (confirmed: boolean) => {
+          if (confirmed) {
+            await deleteList(listId)
+
+            // Haptic feedback
+            if (tg.HapticFeedback) {
+              tg.HapticFeedback.notificationOccurred('success')
+            }
+          }
+        }
+      )
+    } else {
+      // Fallback for browser testing
+      if (window.confirm(`Удалить список "${listName}"? Все товары в списке будут удалены.`)) {
+        await deleteList(listId)
+      }
+    }
   }
 
   const handleCreateList = async (e: React.FormEvent) => {
@@ -81,6 +107,7 @@ export default function ListsPage() {
             key={list.id}
             list={list}
             onClick={() => handleListClick(list.id)}
+            onDelete={() => handleDeleteList(list.id, list.name)}
           />
         ))}
       </div>

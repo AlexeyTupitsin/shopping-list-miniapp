@@ -4,9 +4,14 @@ import './ListCard.css'
 interface ListCardProps {
   list: ShoppingList
   onClick: () => void
+  onDelete: () => void
 }
 
-export default function ListCard({ list, onClick }: ListCardProps) {
+export default function ListCard({ list, onClick, onDelete }: ListCardProps) {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent triggering onClick
+    onDelete()
+  }
   const totalItems = list.items.length
   const completedItems = list.items.filter(item => item.isCompleted).length
   const progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0
@@ -27,7 +32,16 @@ export default function ListCard({ list, onClick }: ListCardProps) {
     <div className="list-card" onClick={onClick}>
       <div className="list-card-header">
         <h3 className="list-card-title">{list.name}</h3>
-        <span className="list-card-date">{formatDate(list.createdAt)}</span>
+        <div className="list-card-actions">
+          <span className="list-card-date">{formatDate(list.createdAt)}</span>
+          <button
+            className="delete-btn"
+            onClick={handleDelete}
+            title="Удалить список"
+          >
+            🗑️
+          </button>
+        </div>
       </div>
 
       <div className="list-card-stats">
