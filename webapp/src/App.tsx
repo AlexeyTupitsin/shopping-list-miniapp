@@ -10,6 +10,7 @@ declare global {
       WebApp: {
         ready: () => void
         expand: () => void
+        initData?: string
         MainButton: {
           text: string
           show: () => void
