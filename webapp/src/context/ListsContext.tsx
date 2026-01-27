@@ -48,11 +48,11 @@ export function ListsProvider({ children }: { children: ReactNode }) {
       const userId = getTelegramUserId()
       console.log('Loading lists for user:', userId)
 
-      // Fetch lists where user is owner or member
+      // Fetch lists where user is owner (simplified for now)
       const { data: listsData, error: listsError } = await supabase
         .from('lists')
         .select('*')
-        .or(`owner_id.eq.${userId},id.in.(select list_id from list_members where user_id = ${userId})`)
+        .eq('owner_id', userId)
         .order('created_at', { ascending: false })
 
       if (listsError) {
