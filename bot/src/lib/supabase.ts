@@ -56,6 +56,16 @@ export async function createList(userId: number, name: string): Promise<DbList> 
     throw error
   }
 
+  // Add owner as a member
+  const { error: memberError } = await supabase
+    .from('list_members')
+    .insert({ list_id: data.id, user_id: userId })
+
+  if (memberError) {
+    console.error('Error adding owner as member:', memberError)
+    // Don't throw - list is created, member addition is optional
+  }
+
   return data
 }
 

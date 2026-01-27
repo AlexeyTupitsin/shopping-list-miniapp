@@ -45,9 +45,16 @@ export default function ListCard({ list, onClick, onDelete }: ListCardProps) {
       </div>
 
       <div className="list-card-stats">
-        <span className="stat-text">
-          {completedItems} из {totalItems} выполнено
-        </span>
+        <div className="stats-row">
+          <span className="stat-text">
+            {completedItems} из {totalItems} выполнено
+          </span>
+          {list.memberCount > 0 && (
+            <span className="stat-text members-count">
+              👥 {list.memberCount}
+            </span>
+          )}
+        </div>
         {totalItems > 0 && (
           <div className="progress-bar">
             <div

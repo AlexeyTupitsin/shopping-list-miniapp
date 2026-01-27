@@ -36,6 +36,12 @@ export function ListsProvider({ children }: { children: ReactNode }) {
           loadLists()
         }
       )
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'list_members' },
+        () => {
+          loadLists()
+        }
+      )
       .subscribe()
 
     return () => {
@@ -48,27 +54,63 @@ export function ListsProvider({ children }: { children: ReactNode }) {
       const userId = getTelegramUserId()
       console.log('Loading lists for user:', userId)
 
-      // Fetch lists where user is owner (simplified for now)
-      const { data: listsData, error: listsError } = await supabase
+      // Fetch lists where user is owner
+      const { data: ownerLists, error: ownerError } = await supabase
         .from('lists')
         .select('*')
         .eq('owner_id', userId)
-        .order('created_at', { ascending: false })
 
-      if (listsError) {
-        console.error('Error fetching lists:', listsError)
-        throw listsError
+      if (ownerError) {
+        console.error('Error fetching owner lists:', ownerError)
+        throw ownerError
       }
 
-      console.log('Loaded lists:', listsData?.length || 0)
+      // Fetch lists where user is a member
+      const { data: memberData, error: memberError } = await supabase
+        .from('list_members')
+        .select('list_id')
+        .eq('user_id', userId)
 
-      if (!listsData) {
+      if (memberError) {
+        console.error('Error fetching member lists:', memberError)
+        throw memberError
+      }
+
+      const memberListIds = memberData?.map(m => m.list_id) || []
+
+      let sharedLists: any[] = []
+      if (memberListIds.length > 0) {
+        const { data: sharedData, error: sharedError } = await supabase
+          .from('lists')
+          .select('*')
+          .in('id', memberListIds)
+
+        if (sharedError) {
+          console.error('Error fetching shared lists:', sharedError)
+        } else {
+          sharedLists = sharedData || []
+        }
+      }
+
+      // Combine and deduplicate (in case user is both owner and member)
+      const allListsMap = new Map()
+
+      ownerLists?.forEach(list => allListsMap.set(list.id, list))
+      sharedLists.forEach(list => allListsMap.set(list.id, list))
+
+      const listsData = Array.from(allListsMap.values())
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+      console.log('Loaded lists:', listsData?.length || 0, `(${ownerLists?.length || 0} owned, ${sharedLists.length} shared)`)
+      console.log('List IDs:', listsData.map(l => l.id))
+
+      if (listsData.length === 0) {
         setLists([])
         setLoading(false)
         return
       }
 
-      // Fetch items for each list
+      // Fetch items and members for each list
       const listsWithItems = await Promise.all(
         listsData.map(async (list) => {
           const { data: itemsData } = await supabase
@@ -87,11 +129,18 @@ export function ListsProvider({ children }: { children: ReactNode }) {
             createdAt: item.created_at
           }))
 
+          // Fetch member count
+          const { count: memberCount } = await supabase
+            .from('list_members')
+            .select('*', { count: 'exact', head: true })
+            .eq('list_id', list.id)
+
           return {
             id: list.id,
             name: list.name,
             ownerId: list.owner_id,
             items,
+            memberCount: memberCount || 0,
             createdAt: list.created_at
           }
         })
@@ -117,12 +166,23 @@ export function ListsProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error
 
+      // Add owner as a member
+      const { error: memberError } = await supabase
+        .from('list_members')
+        .insert({ list_id: data.id, user_id: userId })
+
+      if (memberError) {
+        console.error('Error adding owner as member:', memberError)
+        // Don't throw - list is created, member addition is optional
+      }
+
       // Add to local state
       const newList: ShoppingList = {
         id: data.id,
         name: data.name,
         ownerId: data.owner_id,
         items: [],
+        memberCount: 1, // Owner is now a member
         createdAt: data.created_at
       }
 

@@ -28,7 +28,8 @@
       "WebFetch(domain:shopping-list-miniapp.vercel.app)",
       "Bash(timeout /t 3)",
       "Bash(timeout /t)",
-      "Bash(if exist nul del nul)"
+      "Bash(if exist nul del nul)",
+      "Bash(node:*)"
     ]
   }
 }

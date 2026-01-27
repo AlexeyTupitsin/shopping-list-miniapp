@@ -4,7 +4,7 @@ import ListItem from '../components/ListItem'
 import AddItemForm from '../components/AddItemForm'
 import { useLists } from '../context/ListsContext'
 import { ShoppingItem } from '../types'
-import { getTelegramUserId } from '../lib/supabase'
+import { getTelegramUserId, supabase } from '../lib/supabase'
 import './ListDetailPage.css'
 
 export default function ListDetailPage() {
@@ -13,6 +13,7 @@ export default function ListDetailPage() {
   const { getListById, updateList } = useLists()
 
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
+  const [members, setMembers] = useState<number[]>([])
 
   const list = listId ? getListById(listId) : null
 
@@ -20,8 +21,27 @@ export default function ListDetailPage() {
     if (!list) {
       // List not found, redirect to lists page
       navigate('/')
+    } else {
+      // Load members when list is loaded
+      loadMembers()
     }
   }, [list, navigate])
+
+  const loadMembers = async () => {
+    if (!listId) return
+
+    const { data, error } = await supabase
+      .from('list_members')
+      .select('user_id')
+      .eq('list_id', listId)
+
+    if (error) {
+      console.error('Error loading members:', error)
+      return
+    }
+
+    setMembers(data?.map(m => m.user_id) || [])
+  }
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp
@@ -142,6 +162,21 @@ export default function ListDetailPage() {
         <p className="list-stats">
           {activeItems.length} активных • {completedItems.length} выполнено
         </p>
+
+        {members.length > 0 && (
+          <div className="members-section">
+            <span className="members-label">
+              👥 Участники ({members.length})
+            </span>
+            <div className="members-list">
+              {members.map((userId) => (
+                <span key={userId} className="member-badge">
+                  {userId}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="list-container">

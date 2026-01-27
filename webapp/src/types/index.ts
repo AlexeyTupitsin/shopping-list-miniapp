@@ -13,6 +13,7 @@ export interface ShoppingList {
   name: string
   items: ShoppingItem[]
   ownerId: number
+  memberCount: number
   createdAt: string
 }
 

@@ -68,9 +68,24 @@
   gap: 8px;
 }
 
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
 .stat-text {
   font-size: 14px;
   color: #64748B;
+}
+
+.members-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  color: var(--color-primary);
 }
 
 .progress-bar {
