@@ -28,6 +28,7 @@ declare global {
         }
         showConfirm?: (message: string, callback: (confirmed: boolean) => void) => void
         showPopup?: (params: { title?: string; message: string; buttons?: Array<{ type?: string; text?: string }> }, callback?: (buttonId: string) => void) => void
+        openTelegramLink?: (url: string) => void
         themeParams: {
           bg_color?: string
           text_color?: string

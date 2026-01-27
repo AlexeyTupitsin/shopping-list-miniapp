@@ -1,5 +1,5 @@
 import { Bot, Context, InlineKeyboard } from 'grammy';
-import { getUserLists, createList, getListWithItems } from './lib/supabase.js';
+import { getUserLists, createList, getListWithItems, addListMember } from './lib/supabase.js';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const WEBAPP_URL = process.env.WEBAPP_URL || 'http://localhost:5173';
@@ -16,6 +16,48 @@ const userStates = new Map<number, string>();
 
 // Command: /start
 bot.command('start', async (ctx) => {
+  const userId = ctx.from?.id;
+  if (!userId) return;
+
+  // Check for deep link parameter (e.g., /start list_abc123)
+  const startParam = ctx.match;
+
+  if (startParam && typeof startParam === 'string' && startParam.startsWith('list_')) {
+    // Extract list ID from parameter
+    const listId = startParam.substring(5); // Remove "list_" prefix
+
+    try {
+      // Get list info
+      const { list } = await getListWithItems(listId);
+
+      // Add user as member
+      const success = await addListMember(listId, userId);
+
+      if (success) {
+        const listUrl = `${WEBAPP_URL}/list/${listId}`;
+        const keyboard = new InlineKeyboard()
+          .webApp(`📋 Открыть "${list.name}"`, listUrl)
+          .row()
+          .webApp('📚 Все списки', WEBAPP_URL);
+
+        await ctx.reply(
+          `✅ Вы добавлены в список "${list.name}"\\!\n\n` +
+          'Теперь вы можете добавлять товары и видеть изменения в реальном времени\\.',
+          {
+            reply_markup: keyboard,
+            parse_mode: 'MarkdownV2',
+          }
+        );
+        return;
+      }
+    } catch (error) {
+      console.error('Error joining list:', error);
+      await ctx.reply('❌ Не удалось присоединиться к списку. Возможно, он был удалён.');
+      return;
+    }
+  }
+
+  // Regular /start command
   const keyboard = new InlineKeyboard()
     .webApp('📝 Открыть приложение', WEBAPP_URL);
 

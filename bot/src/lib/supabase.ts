@@ -73,7 +73,7 @@ export async function getListWithItems(listId: string) {
   }
 
   // Get items
-  const { data: items, error: itemsError } = await supabase
+  const { data: items, error: itemsError} = await supabase
     .from('items')
     .select('*')
     .eq('list_id', listId)
@@ -85,4 +85,43 @@ export async function getListWithItems(listId: string) {
   }
 
   return { list, items: items || [] }
+}
+
+export async function addListMember(listId: string, userId: number): Promise<boolean> {
+  // Check if list exists
+  const { data: list, error: listError } = await supabase
+    .from('lists')
+    .select('id')
+    .eq('id', listId)
+    .single()
+
+  if (listError || !list) {
+    console.error('List not found:', listId)
+    return false
+  }
+
+  // Check if already a member
+  const { data: existing } = await supabase
+    .from('list_members')
+    .select('*')
+    .eq('list_id', listId)
+    .eq('user_id', userId)
+    .single()
+
+  if (existing) {
+    // Already a member
+    return true
+  }
+
+  // Add as member
+  const { error } = await supabase
+    .from('list_members')
+    .insert({ list_id: listId, user_id: userId })
+
+  if (error) {
+    console.error('Error adding list member:', error)
+    return false
+  }
+
+  return true
 }

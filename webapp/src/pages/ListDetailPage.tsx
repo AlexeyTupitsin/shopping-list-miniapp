@@ -94,6 +94,25 @@ export default function ListDetailPage() {
     })
   }
 
+  const handleShare = () => {
+    if (!list) return
+
+    const tg = window.Telegram?.WebApp
+    const botUsername = 'cartmate_app_bot'
+    const shareUrl = `https://t.me/${botUsername}?start=list_${list.id}`
+    const shareText = `Присоединяйтесь к списку покупок "${list.name}"`
+
+    if (tg?.openTelegramLink) {
+      // Use Telegram share
+      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`)
+    } else {
+      // Fallback: copy to clipboard for browser testing
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert(`Ссылка скопирована: ${shareUrl}`)
+      })
+    }
+  }
+
   if (!list) {
     return (
       <div className="list-detail-page">
@@ -114,7 +133,12 @@ export default function ListDetailPage() {
             ← Назад
           </button>
         )}
-        <h1>{list.name}</h1>
+        <div className="header-title-row">
+          <h1>{list.name}</h1>
+          <button className="share-btn" onClick={handleShare} title="Поделиться списком">
+            🔗
+          </button>
+        </div>
         <p className="list-stats">
           {activeItems.length} активных • {completedItems.length} выполнено
         </p>
