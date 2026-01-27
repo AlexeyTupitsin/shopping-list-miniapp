@@ -101,9 +101,6 @@ export function ListsProvider({ children }: { children: ReactNode }) {
       const listsData = Array.from(allListsMap.values())
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-      console.log('Loaded lists:', listsData?.length || 0, `(${ownerLists?.length || 0} owned, ${sharedLists.length} shared)`)
-      console.log('List IDs:', listsData.map(l => l.id))
-
       if (listsData.length === 0) {
         setLists([])
         setLoading(false)

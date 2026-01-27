@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ListCard from '../components/ListCard'
 import { useLists } from '../context/ListsContext'
-import { getTelegramUserId } from '../lib/supabase'
 import './ListsPage.css'
 
 export default function ListsPage() {
   const { lists, loading, addList, deleteList } = useLists()
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
   const [newListName, setNewListName] = useState('')
-  const [showDebug, setShowDebug] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -93,40 +91,6 @@ export default function ListsPage() {
         <p className="lists-subtitle">
           {lists.length} {lists.length === 1 ? 'список' : 'списка'}
         </p>
-        <button
-          onClick={() => setShowDebug(!showDebug)}
-          style={{
-            padding: '4px 8px',
-            fontSize: '12px',
-            background: 'rgba(41, 182, 246, 0.1)',
-            border: '1px solid rgba(41, 182, 246, 0.3)',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginTop: '8px'
-          }}
-        >
-          {showDebug ? 'Скрыть отладку' : 'Показать отладку'}
-        </button>
-        {showDebug && (
-          <div style={{
-            marginTop: '12px',
-            padding: '12px',
-            background: '#f8f9fa',
-            borderRadius: '8px',
-            fontSize: '12px',
-            textAlign: 'left',
-            fontFamily: 'monospace',
-            color: '#333'
-          }}>
-            <div>User ID: {getTelegramUserId()}</div>
-            <div>Lists loaded: {lists.length}</div>
-            {lists.map(list => (
-              <div key={list.id} style={{ marginTop: '4px', paddingLeft: '8px' }}>
-                • {list.name} (owner: {list.ownerId}, members: {list.memberCount})
-              </div>
-            ))}
-          </div>
-        )}
       </header>
 
       <div className="lists-container">
