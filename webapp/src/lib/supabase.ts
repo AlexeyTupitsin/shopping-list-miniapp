@@ -39,3 +39,48 @@ export function getTelegramUserId(): number {
 
   return 0
 }
+
+// Load user information by user IDs
+export async function getUsersByIds(userIds: number[]): Promise<Map<number, { firstName: string; lastName?: string; username?: string }>> {
+  if (userIds.length === 0) {
+    return new Map()
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, first_name, last_name, username')
+    .in('id', userIds)
+
+  if (error) {
+    console.error('Error fetching users:', error)
+    return new Map()
+  }
+
+  const usersMap = new Map()
+  data?.forEach(user => {
+    usersMap.set(user.id, {
+      firstName: user.first_name,
+      lastName: user.last_name,
+      username: user.username
+    })
+  })
+
+  return usersMap
+}
+
+// Format user display name
+export function formatUserName(user: { firstName: string; lastName?: string; username?: string } | undefined, userId: number): string {
+  if (!user) {
+    return `User ${userId}`
+  }
+
+  if (user.lastName) {
+    return `${user.firstName} ${user.lastName}`
+  }
+
+  if (user.username) {
+    return `${user.firstName} (@${user.username})`
+  }
+
+  return user.firstName
+}

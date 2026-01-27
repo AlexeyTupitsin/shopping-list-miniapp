@@ -4,7 +4,7 @@ import ListItem from '../components/ListItem'
 import AddItemForm from '../components/AddItemForm'
 import { useLists } from '../context/ListsContext'
 import { ShoppingItem } from '../types'
-import { getTelegramUserId, supabase } from '../lib/supabase'
+import { getTelegramUserId, supabase, getUsersByIds, formatUserName } from '../lib/supabase'
 import './ListDetailPage.css'
 
 export default function ListDetailPage() {
@@ -14,6 +14,7 @@ export default function ListDetailPage() {
 
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
   const [members, setMembers] = useState<number[]>([])
+  const [usersInfo, setUsersInfo] = useState<Map<number, { firstName: string; lastName?: string; username?: string }>>(new Map())
 
   const list = listId ? getListById(listId) : null
 
@@ -40,7 +41,14 @@ export default function ListDetailPage() {
       return
     }
 
-    setMembers(data?.map(m => m.user_id) || [])
+    const memberIds = data?.map(m => m.user_id) || []
+    setMembers(memberIds)
+
+    // Load user information
+    if (memberIds.length > 0) {
+      const users = await getUsersByIds(memberIds)
+      setUsersInfo(users)
+    }
   }
 
   useEffect(() => {
@@ -171,7 +179,7 @@ export default function ListDetailPage() {
             <div className="members-list">
               {members.map((userId) => (
                 <span key={userId} className="member-badge">
-                  {userId}
+                  {formatUserName(usersInfo.get(userId), userId)}
                 </span>
               ))}
             </div>

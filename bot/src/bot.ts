@@ -1,5 +1,5 @@
 import { Bot, Context, InlineKeyboard } from 'grammy';
-import { getUserLists, createList, getListWithItems, addListMember } from './lib/supabase.js';
+import { getUserLists, createList, getListWithItems, addListMember, upsertUser } from './lib/supabase.js';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const WEBAPP_URL = process.env.WEBAPP_URL || 'http://localhost:5173';
@@ -18,6 +18,14 @@ const userStates = new Map<number, string>();
 bot.command('start', async (ctx) => {
   const userId = ctx.from?.id;
   if (!userId) return;
+
+  // Save user info
+  await upsertUser(
+    userId,
+    ctx.from.first_name,
+    ctx.from.last_name,
+    ctx.from.username
+  );
 
   // Check for deep link parameter (e.g., /start list_abc123)
   const startParam = ctx.match;
@@ -81,6 +89,14 @@ bot.command('newlist', async (ctx) => {
   const userId = ctx.from?.id;
   if (!userId) return;
 
+  // Save user info
+  await upsertUser(
+    userId,
+    ctx.from.first_name,
+    ctx.from.last_name,
+    ctx.from.username
+  );
+
   userStates.set(userId, 'awaiting_list_name');
 
   await ctx.reply(
@@ -101,6 +117,14 @@ bot.command('mylists', async (ctx) => {
     await ctx.reply('Ошибка: не удалось определить пользователя');
     return;
   }
+
+  // Save user info
+  await upsertUser(
+    userId,
+    ctx.from.first_name,
+    ctx.from.last_name,
+    ctx.from.username
+  );
 
   try {
     const lists = await getUserLists(userId);

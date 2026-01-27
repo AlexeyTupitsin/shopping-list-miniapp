@@ -97,6 +97,25 @@ export async function getListWithItems(listId: string) {
   return { list, items: items || [] }
 }
 
+// Save or update user information
+export async function upsertUser(userId: number, firstName: string, lastName?: string, username?: string): Promise<void> {
+  const { error } = await supabase
+    .from('users')
+    .upsert({
+      id: userId,
+      first_name: firstName,
+      last_name: lastName || null,
+      username: username || null,
+      updated_at: new Date().toISOString()
+    }, {
+      onConflict: 'id'
+    })
+
+  if (error) {
+    console.error('Error upserting user:', error)
+  }
+}
+
 export async function addListMember(listId: string, userId: number): Promise<boolean> {
   // Check if list exists
   const { data: list, error: listError } = await supabase
