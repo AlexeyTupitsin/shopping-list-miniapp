@@ -46,6 +46,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
   const loadLists = async () => {
     try {
       const userId = getTelegramUserId()
+      console.log('Loading lists for user:', userId)
 
       // Fetch lists where user is owner or member
       const { data: listsData, error: listsError } = await supabase
@@ -54,7 +55,12 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         .or(`owner_id.eq.${userId},id.in.(select list_id from list_members where user_id = ${userId})`)
         .order('created_at', { ascending: false })
 
-      if (listsError) throw listsError
+      if (listsError) {
+        console.error('Error fetching lists:', listsError)
+        throw listsError
+      }
+
+      console.log('Loaded lists:', listsData?.length || 0)
 
       if (!listsData) {
         setLists([])
