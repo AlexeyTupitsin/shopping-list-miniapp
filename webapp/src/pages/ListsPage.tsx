@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ListCard from '../components/ListCard'
 import { useLists } from '../context/ListsContext'
-import { ShoppingList } from '../types'
 import './ListsPage.css'
 
 export default function ListsPage() {
-  const { lists, addList } = useLists()
+  const { lists, loading, addList } = useLists()
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
   const [newListName, setNewListName] = useState('')
   const navigate = useNavigate()
@@ -37,17 +36,10 @@ export default function ListsPage() {
     navigate(`/list/${listId}`)
   }
 
-  const handleCreateList = (e: React.FormEvent) => {
+  const handleCreateList = async (e: React.FormEvent) => {
     e.preventDefault()
     if (newListName.trim()) {
-      const newList: ShoppingList = {
-        id: Date.now().toString(),
-        name: newListName.trim(),
-        ownerId: 123456789,
-        createdAt: new Date().toISOString(),
-        items: [],
-      }
-      addList(newList)
+      await addList(newListName.trim())
       setNewListName('')
       setIsAddFormOpen(false)
 
@@ -56,6 +48,14 @@ export default function ListsPage() {
         window.Telegram.WebApp.HapticFeedback.notificationOccurred('success')
       }
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="lists-page">
+        <div className="loading">Загрузка...</div>
+      </div>
+    )
   }
 
   return (
