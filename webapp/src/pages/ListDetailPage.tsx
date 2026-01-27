@@ -4,6 +4,7 @@ import ListItem from '../components/ListItem'
 import AddItemForm from '../components/AddItemForm'
 import { useLists } from '../context/ListsContext'
 import { ShoppingItem } from '../types'
+import { getTelegramUserId } from '../lib/supabase'
 import './ListDetailPage.css'
 
 export default function ListDetailPage() {
@@ -53,10 +54,10 @@ export default function ListDetailPage() {
     }
   }, [list, navigate])
 
-  const handleToggleItem = (id: string) => {
+  const handleToggleItem = async (id: string) => {
     if (!list) return
 
-    updateList(list.id, {
+    await updateList(list.id, {
       ...list,
       items: list.items.map((item) =>
         item.id === id
@@ -66,28 +67,28 @@ export default function ListDetailPage() {
     })
   }
 
-  const handleDeleteItem = (id: string) => {
+  const handleDeleteItem = async (id: string) => {
     if (!list) return
 
-    updateList(list.id, {
+    await updateList(list.id, {
       ...list,
       items: list.items.filter((item) => item.id !== id),
     })
   }
 
-  const handleAddItem = (name: string, quantity?: string) => {
+  const handleAddItem = async (name: string, quantity?: string) => {
     if (!list) return
 
     const newItem: ShoppingItem = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name,
       quantity,
       isCompleted: false,
-      addedBy: 123456789,
+      addedBy: getTelegramUserId(),
       createdAt: new Date().toISOString(),
     }
 
-    updateList(list.id, {
+    await updateList(list.id, {
       ...list,
       items: [...list.items, newItem],
     })

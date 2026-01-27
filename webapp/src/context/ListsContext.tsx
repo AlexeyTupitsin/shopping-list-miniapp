@@ -6,7 +6,7 @@ interface ListsContextType {
   lists: ShoppingList[]
   loading: boolean
   addList: (name: string) => Promise<void>
-  updateList: (id: string, updatedList: ShoppingList) => void
+  updateList: (id: string, updatedList: ShoppingList) => Promise<void>
   deleteList: (id: string) => Promise<void>
   getListById: (id: string) => ShoppingList | undefined
 }
@@ -126,48 +126,67 @@ export function ListsProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const updateList = (id: string, updatedList: ShoppingList) => {
+  const updateList = async (id: string, updatedList: ShoppingList) => {
+    // Update local state immediately for responsiveness
+    setLists(lists.map(list => list.id === id ? updatedList : list))
+
     // Update items in Supabase
     const list = lists.find(l => l.id === id)
     if (!list) return
 
-    // Find changed items
-    updatedList.items.forEach(async (item) => {
-      const oldItem = list.items.find(i => i.id === item.id)
+    try {
+      // Find changed/new items
+      const itemPromises = updatedList.items.map(async (item) => {
+        const oldItem = list.items.find(i => i.id === item.id)
 
-      if (!oldItem) {
-        // New item - insert
-        await supabase.from('items').insert({
-          id: item.id,
-          list_id: id,
-          name: item.name,
-          quantity: item.quantity,
-          is_completed: item.isCompleted,
-          added_by: item.addedBy,
-          completed_by: item.completedBy
-        })
-      } else if (oldItem.isCompleted !== item.isCompleted) {
-        // Item status changed - update
-        await supabase
-          .from('items')
-          .update({
+        if (!oldItem) {
+          // New item - insert
+          const { error } = await supabase.from('items').insert({
+            id: item.id,
+            list_id: id,
+            name: item.name,
+            quantity: item.quantity,
             is_completed: item.isCompleted,
-            completed_by: item.isCompleted ? getTelegramUserId() : null
+            added_by: item.addedBy,
+            completed_by: item.completedBy
           })
-          .eq('id', item.id)
-      }
-    })
+          if (error) {
+            console.error('Error inserting item:', error)
+            throw error
+          }
+        } else if (oldItem.isCompleted !== item.isCompleted) {
+          // Item status changed - update
+          const { error } = await supabase
+            .from('items')
+            .update({
+              is_completed: item.isCompleted,
+              completed_by: item.isCompleted ? getTelegramUserId() : null
+            })
+            .eq('id', item.id)
+          if (error) {
+            console.error('Error updating item:', error)
+            throw error
+          }
+        }
+      })
 
-    // Find deleted items
-    list.items.forEach(async (oldItem) => {
-      const exists = updatedList.items.find(i => i.id === oldItem.id)
-      if (!exists) {
-        await supabase.from('items').delete().eq('id', oldItem.id)
-      }
-    })
+      // Find deleted items
+      const deletePromises = list.items
+        .filter(oldItem => !updatedList.items.find(i => i.id === oldItem.id))
+        .map(async (oldItem) => {
+          const { error } = await supabase.from('items').delete().eq('id', oldItem.id)
+          if (error) {
+            console.error('Error deleting item:', error)
+            throw error
+          }
+        })
 
-    // Update local state immediately for responsiveness
-    setLists(lists.map(list => list.id === id ? updatedList : list))
+      await Promise.all([...itemPromises, ...deletePromises])
+    } catch (error) {
+      console.error('Error updating list:', error)
+      // Reload from server on error
+      await loadLists()
+    }
   }
 
   const deleteList = async (id: string) => {
