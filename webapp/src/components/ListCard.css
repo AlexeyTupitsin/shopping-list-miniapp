@@ -1,0 +1,69 @@
+.list-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 12px;
+  border: 2px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(41, 182, 246, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.list-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(41, 182, 246, 0.15);
+}
+
+.list-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.list-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0;
+  flex: 1;
+}
+
+.list-card-date {
+  font-size: 12px;
+  color: #94A3B8;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+.list-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-text {
+  font-size: 14px;
+  color: #64748B;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: var(--color-bg-light);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.list-card-empty {
+  font-size: 14px;
+  color: #94A3B8;
+  margin: 0;
+  font-style: italic;
+}

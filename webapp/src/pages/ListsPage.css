@@ -1,0 +1,204 @@
+.lists-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+
+.lists-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.lists-header h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #1E293B;
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lists-subtitle {
+  color: #64748B;
+  font-size: 14px;
+}
+
+.lists-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty-state > p:first-child {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state > p:nth-child(2) {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 8px;
+}
+
+.empty-state .hint {
+  color: #64748B;
+  font-size: 14px;
+}
+
+/* Add List Form */
+.add-list-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.add-list-form {
+  background-color: white;
+  border-radius: 20px 20px 0 0;
+  padding: 24px;
+  width: 100%;
+  max-width: 600px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.add-list-form h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1E293B;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-bg-lighter);
+  color: #1E293B;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--color-primary);
+  background-color: white;
+}
+
+.form-group input::placeholder {
+  color: #94A3B8;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.form-actions button {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-cancel {
+  background-color: var(--color-bg-light);
+  color: #1E293B;
+}
+
+.btn-add {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.btn-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.form-actions button:active:not(:disabled) {
+  opacity: 0.8;
+}
+
+/* Кнопка для локального тестирования */
+.local-test-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(41, 182, 246, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.local-test-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(41, 182, 246, 0.4);
+}
+
+.local-test-btn:active {
+  transform: translateY(0);
+}

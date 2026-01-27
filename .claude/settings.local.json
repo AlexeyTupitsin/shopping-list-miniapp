@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:core.telegram.org)",
+      "Bash(docker:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm create:*)",
+      "Bash(supabase --version:*)",
+      "Bash(scoop --version:*)",
+      "Bash(choco:*)",
+      "Bash(npx supabase --version)",
+      "Bash(npx supabase:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx localtunnel --port 5173)",
+      "Bash(move \"f99e2d1e5981ea893a9e869b52ad9eaf_6f378e7d-120a-4401-89e3-9b3249c28f1f.png\" \"webapp/public/images/cover-1.png\")",
+      "Bash(move \"37c29cd3205b1eaa45ab0a2601ee9e7a_eb2fde35-c733-4d6f-b1f7-7dfb562d281d.png\" \"webapp/public/images/cover-2.png\")",
+      "Bash(move \"32fc2b294684701feb69bcf4c15e2501_aedac126-67a4-4328-8422-cff30a18f8f2.png\" \"webapp/public/images/cover-3.png\")",
+      "Bash(ls:*)",
+      "Bash(npx localtunnel --port 5174)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

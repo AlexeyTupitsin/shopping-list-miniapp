@@ -1,0 +1,25 @@
+{
+  "name": "shopping-list-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for Shopping List Mini App",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": ["telegram", "bot", "grammy"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.93.1",
+    "dotenv": "^17.2.3",
+    "grammy": "^1.39.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

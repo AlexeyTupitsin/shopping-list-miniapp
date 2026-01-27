@@ -1,0 +1,33 @@
+{
+  "name": "shopping-list-webapp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shopping List Mini App for Telegram",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "telegram",
+    "miniapp",
+    "shopping-list"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.93.1",
+    "@telegram-apps/telegram-ui": "^2.1.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.13.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}
