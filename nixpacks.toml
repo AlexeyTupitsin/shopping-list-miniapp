@@ -1,8 +1,0 @@
-[phases.install]
-cmds = ["cd bot && npm ci"]
-
-[phases.build]
-cmds = ["cd bot && npm run build"]
-
-[start]
-cmd = "cd bot && node dist/index.js"
