@@ -15,4 +15,4 @@ COPY bot/ ./
 RUN npm run build
 
 # Start bot
-CMD ["node", "dist/index.js"]
+CMD node dist/index.js
