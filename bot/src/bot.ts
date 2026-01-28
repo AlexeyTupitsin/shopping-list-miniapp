@@ -17,7 +17,7 @@ const userStates = new Map<number, string>();
 // Command: /start
 bot.command('start', async (ctx) => {
   const userId = ctx.from?.id;
-  if (!userId) return;
+  if (!userId || !ctx.from) return;
 
   // Save user info
   await upsertUser(
@@ -87,7 +87,7 @@ bot.command('start', async (ctx) => {
 // Command: /newlist
 bot.command('newlist', async (ctx) => {
   const userId = ctx.from?.id;
-  if (!userId) return;
+  if (!userId || !ctx.from) return;
 
   // Save user info
   await upsertUser(
@@ -113,7 +113,7 @@ bot.command('newlist', async (ctx) => {
 // Command: /mylists
 bot.command('mylists', async (ctx) => {
   const userId = ctx.from?.id;
-  if (!userId) {
+  if (!userId || !ctx.from) {
     await ctx.reply('Ошибка: не удалось определить пользователя');
     return;
   }
