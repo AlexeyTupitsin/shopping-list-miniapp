@@ -1,3 +1,44 @@
+/* Wrapper для свайп-функциональности */
+.list-item-wrapper {
+  position: relative;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+/* Фоновые индикаторы действий */
+.swipe-action {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.swipe-action.active {
+  opacity: 1;
+}
+
+.swipe-action-left {
+  right: 0;
+  background: linear-gradient(90deg, transparent, #EF4444);
+  justify-content: flex-end;
+  width: 120px;
+}
+
+.swipe-action-right {
+  left: 0;
+  background: linear-gradient(-90deg, transparent, #4CAF50);
+  justify-content: flex-start;
+  width: 120px;
+}
+
 .list-item {
   display: flex;
   align-items: center;
@@ -5,10 +46,11 @@
   padding: 16px;
   background-color: white;
   border-radius: 16px;
-  margin-bottom: 8px;
   transition: all 0.2s ease;
   border: 2px solid var(--color-border);
   box-shadow: 0 2px 8px rgba(41, 182, 246, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .list-item.completed {
